@@ -10,72 +10,14 @@ namespace DeadlockDash.Modules
 {
     internal static class Skills
     {
-        #region genericskills
-        public static void CreateSkillFamilies(GameObject targetPrefab) => CreateSkillFamilies(targetPrefab, SkillSlot.Primary, SkillSlot.Secondary, SkillSlot.Utility, SkillSlot.Special);
-        /// <summary>
-        /// Create in order the GenericSkills for the skillslots desired, and create skillfamilies for them.
-        /// </summary>
-        /// <param name="targetPrefab">Body prefab to add GenericSkills</param>
-        /// <param name="slots">Order of slots to add to the body prefab.</param>
-        public static void CreateSkillFamilies(GameObject targetPrefab, params SkillSlot[] slots)
-        {
-            SkillLocator skillLocator = targetPrefab.GetComponent<SkillLocator>();
-
-            for (int i = 0; i < slots.Length; i++)
-            {
-                switch (slots[i])
-                {
-                    case SkillSlot.Primary:
-                        skillLocator.primary = CreateGenericSkillWithSkillFamily(targetPrefab, "Primary");
-                        break;
-                    case SkillSlot.Secondary:
-                        skillLocator.secondary = CreateGenericSkillWithSkillFamily(targetPrefab, "Secondary");
-                        break;
-                    case SkillSlot.Utility:
-                        skillLocator.utility = CreateGenericSkillWithSkillFamily(targetPrefab, "Utility");
-                        break;
-                    case SkillSlot.Special:
-                        skillLocator.special = CreateGenericSkillWithSkillFamily(targetPrefab, "Special");
-                        break;
-                    case SkillSlot.None:
-                        break;
-                }
-            }
-        }
-
-        public static void ClearGenericSkills(GameObject targetPrefab)
-        {
-            foreach (GenericSkill obj in targetPrefab.GetComponentsInChildren<GenericSkill>())
-            {
-                UnityEngine.Object.DestroyImmediate(obj);
-            }
-        }
-
-        public static GenericSkill CreateGenericSkillWithSkillFamily(GameObject targetPrefab, SkillSlot skillSlot, bool hidden = false)
-        {
-            SkillLocator skillLocator = targetPrefab.GetComponent<SkillLocator>();
-            switch (skillSlot)
-            {
-                case SkillSlot.Primary:
-                    return skillLocator.primary = CreateGenericSkillWithSkillFamily(targetPrefab, "Primary", hidden);
-                case SkillSlot.Secondary:
-                    return skillLocator.secondary = CreateGenericSkillWithSkillFamily(targetPrefab, "Secondary", hidden);
-                case SkillSlot.Utility:
-                    return skillLocator.utility = CreateGenericSkillWithSkillFamily(targetPrefab, "Utility", hidden);
-                case SkillSlot.Special:
-                    return skillLocator.special = CreateGenericSkillWithSkillFamily(targetPrefab, "Special", hidden);
-                case SkillSlot.None:
-                    Log.Error("Failed to create GenericSkill with skillslot None. If making a GenericSkill outside of the main 4, specify a familyName, and optionally a genericSkillName");
-                    return null;
-            }
-            return null;
-        }
         public static GenericSkill CreateGenericSkillWithSkillFamily(GameObject targetPrefab, string familyName, bool hidden = false) => CreateGenericSkillWithSkillFamily(targetPrefab, familyName, familyName, hidden);
+
         public static GenericSkill CreateGenericSkillWithSkillFamily(GameObject targetPrefab, string genericSkillName, string familyName, bool hidden = false)
         {
             GenericSkill skill = targetPrefab.AddComponent<GenericSkill>();
             skill.skillName = genericSkillName;
             skill.hideInCharacterSelect = hidden;
+            skill.hideInLoadoutSelect = hidden;
 
             SkillFamily newFamily = ScriptableObject.CreateInstance<SkillFamily>();
             (newFamily as ScriptableObject).name = targetPrefab.name + familyName + "Family";
@@ -86,11 +28,7 @@ namespace DeadlockDash.Modules
             Content.AddSkillFamily(newFamily);
             return skill;
         }
-        #endregion
 
-        #region skillfamilies
-
-        //everything calls this
         public static void AddSkillToFamily(SkillFamily skillFamily, SkillDef skillDef, UnlockableDef unlockableDef = null)
         {
             Array.Resize(ref skillFamily.variants, skillFamily.variants.Length + 1);
@@ -111,41 +49,6 @@ namespace DeadlockDash.Modules
             }
         }
 
-        public static void AddPrimarySkills(GameObject targetPrefab, params SkillDef[] skillDefs)
-        {
-            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().primary.skillFamily, skillDefs);
-        }
-        public static void AddSecondarySkills(GameObject targetPrefab, params SkillDef[] skillDefs)
-        {
-            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().secondary.skillFamily, skillDefs);
-        }
-        public static void AddUtilitySkills(GameObject targetPrefab, params SkillDef[] skillDefs)
-        {
-            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().utility.skillFamily, skillDefs);
-        }
-        public static void AddSpecialSkills(GameObject targetPrefab, params SkillDef[] skillDefs)
-        {
-            AddSkillsToFamily(targetPrefab.GetComponent<SkillLocator>().special.skillFamily, skillDefs);
-        }
-
-        /// <summary>
-        /// pass in an amount of unlockables equal to or less than skill variants, null for skills that aren't locked
-        /// <code>
-        /// AddUnlockablesToFamily(skillLocator.primary, null, skill2UnlockableDef, null, skill4UnlockableDef);
-        /// </code>
-        /// </summary>
-        public static void AddUnlockablesToFamily(SkillFamily skillFamily, params UnlockableDef[] unlockableDefs)
-        {
-            for (int i = 0; i < unlockableDefs.Length; i++)
-            {
-                SkillFamily.Variant variant = skillFamily.variants[i];
-                variant.unlockableDef = unlockableDefs[i];
-                skillFamily.variants[i] = variant;
-            }
-        }
-        #endregion
-
-        #region skilldefs
         public static SkillDef CreateSkillDef(SkillDefInfo skillDefInfo)
         {
             return CreateSkillDef<SkillDef>(skillDefInfo);
@@ -190,7 +93,6 @@ namespace DeadlockDash.Modules
 
             return skillDef;
         }
-        #endregion skilldefs
     }
 
     /// <summary>

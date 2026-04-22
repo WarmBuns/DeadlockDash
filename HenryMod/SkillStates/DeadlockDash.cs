@@ -1,40 +1,31 @@
-﻿using EntityStates;
-using DeadlockDash.Survivors.DeadlockDash;
+using EntityStates;
 using RoR2;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace DeadlockDash.Survivors.DeadlockDash.SkillStates
+namespace DeadlockDash.SkillStates
 {
-    public class Roll : BaseSkillState
+    public class DeadlockDash : BaseSkillState
     {
         public static float duration = 0.5f;
         public static float initialSpeedCoefficient = 5f;
         public static float finalSpeedCoefficient = 2.5f;
 
         public static string dodgeSoundString = "HenryRoll";
-        public static float dodgeFOV = global::EntityStates.Commando.DodgeState.dodgeFOV;
+        public static float dodgeFOV = EntityStates.Commando.DodgeState.dodgeFOV;
 
         private float rollSpeed;
         private Vector3 forwardDirection;
-        private Animator animator;
         private Vector3 previousPosition;
 
         public override void OnEnter()
         {
             base.OnEnter();
-            animator = GetModelAnimator();
 
             if (isAuthority && inputBank && characterDirection)
             {
                 forwardDirection = (inputBank.moveVector == Vector3.zero ? characterDirection.forward : inputBank.moveVector).normalized;
             }
-
-            Vector3 rhs = characterDirection ? characterDirection.forward : forwardDirection;
-            Vector3 rhs2 = Vector3.Cross(Vector3.up, rhs);
-
-            float num = Vector3.Dot(forwardDirection, rhs);
-            float num2 = Vector3.Dot(forwardDirection, rhs2);
 
             RecalculateRollSpeed();
 
@@ -44,15 +35,15 @@ namespace DeadlockDash.Survivors.DeadlockDash.SkillStates
                 characterMotor.velocity = forwardDirection * rollSpeed;
             }
 
-            Vector3 b = characterMotor ? characterMotor.velocity : Vector3.zero;
-            previousPosition = transform.position - b;
+            Vector3 bodyVelocity = characterMotor ? characterMotor.velocity : Vector3.zero;
+            previousPosition = transform.position - bodyVelocity;
 
-            PlayAnimation("FullBody, Override", "Roll", "Roll.playbackRate", duration);
+            //PlayAnimation("FullBody, Override", "Roll", "Roll.playbackRate", duration);
             Util.PlaySound(dodgeSoundString, gameObject);
 
             if (NetworkServer.active)
             {
-                characterBody.AddTimedBuff(DeadlockDashBuffs.armorBuff, 3f * duration);
+                characterBody.AddTimedBuff(Content.DeadlockDashBuffs.armorBuff, 3f * duration);
                 characterBody.AddTimedBuff(RoR2Content.Buffs.HiddenInvincibility, 0.5f * duration);
             }
         }
@@ -67,34 +58,47 @@ namespace DeadlockDash.Survivors.DeadlockDash.SkillStates
             base.FixedUpdate();
             RecalculateRollSpeed();
 
-            if (characterDirection) characterDirection.forward = forwardDirection;
-            if (cameraTargetParams) cameraTargetParams.fovOverride = Mathf.Lerp(dodgeFOV, 60f, fixedAge / duration);
+            if (characterDirection)
+            {
+                characterDirection.forward = forwardDirection;
+            }
+
+            if (cameraTargetParams)
+            {
+                cameraTargetParams.fovOverride = Mathf.Lerp(dodgeFOV, 60f, fixedAge / duration);
+            }
 
             Vector3 normalized = (transform.position - previousPosition).normalized;
             if (characterMotor && characterDirection && normalized != Vector3.zero)
             {
-                Vector3 vector = normalized * rollSpeed;
-                float d = Mathf.Max(Vector3.Dot(vector, forwardDirection), 0f);
-                vector = forwardDirection * d;
-                vector.y = 0f;
-
-                characterMotor.velocity = vector;
+                Vector3 velocity = normalized * rollSpeed;
+                float forwardScale = Mathf.Max(Vector3.Dot(velocity, forwardDirection), 0f);
+                velocity = forwardDirection * forwardScale;
+                velocity.y = 0f;
+                characterMotor.velocity = velocity;
             }
+
             previousPosition = transform.position;
 
             if (isAuthority && fixedAge >= duration)
             {
                 outer.SetNextStateToMain();
-                return;
             }
         }
 
         public override void OnExit()
         {
-            if (cameraTargetParams) cameraTargetParams.fovOverride = -1f;
+            if (cameraTargetParams)
+            {
+                cameraTargetParams.fovOverride = -1f;
+            }
+
             base.OnExit();
 
-            characterMotor.disableAirControlUntilCollision = false;
+            if (characterMotor)
+            {
+                characterMotor.disableAirControlUntilCollision = false;
+            }
         }
 
         public override void OnSerialize(NetworkWriter writer)

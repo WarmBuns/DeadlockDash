@@ -1,58 +1,67 @@
-﻿using R2API;
+using R2API;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace DeadlockDash.Modules {
+namespace DeadlockDash.Modules
+{
     internal static class Language
     {
-        public static string TokensOutput = "";
+        internal static string TokensOutput = string.Empty;
 
-        public static bool usingLanguageFolder = false;
+        internal static bool usingLanguageFolder = false;
 
-        public static bool printingEnabled = false;
+        internal static bool printingEnabled = false;
 
-        public static void Init() {
-            if (usingLanguageFolder) {
-                RoR2.Language.collectLanguageRootFolders += Language_collectLanguageRootFolders;
+        internal static void Init()
+        {
+            if (usingLanguageFolder)
+            {
+                RoR2.Language.collectLanguageRootFolders += CollectLanguageRootFolders;
             }
         }
 
-        private static void Language_collectLanguageRootFolders(List<string> obj) {
+        private static void CollectLanguageRootFolders(List<string> folders)
+        {
             string path = Path.Combine(Path.GetDirectoryName(DeadlockDashPlugin.instance.Info.Location), "Language");
-            if (Directory.Exists(path)) {
-                obj.Add(path);
+            if (Directory.Exists(path))
+            {
+                folders.Add(path);
             }
         }
 
-        public static void Add(string token, string text) {
-            if (!usingLanguageFolder) {
+        internal static void Add(string token, string text)
+        {
+            if (!usingLanguageFolder)
+            {
                 LanguageAPI.Add(token, text);
             }
 
-            if (!printingEnabled) return;
+            if (!printingEnabled)
+            {
+                return;
+            }
 
-            //add a token formatted to language file
             TokensOutput += $"\n    \"{token}\" : \"{text.Replace(Environment.NewLine, "\\n").Replace("\n", "\\n")}\",";
         }
 
-        public static void PrintOutput(string fileName = "") {
-            if (!printingEnabled) return;
+        internal static void PrintOutput(string fileName = "")
+        {
+            if (!printingEnabled)
+            {
+                return;
+            }
 
-            //wrap all tokens in a properly formatted language file
             string strings = $"{{\n    strings:\n    {{{TokensOutput}\n    }}\n}}";
-
-            //spit out language dump in console for copy paste if you want
             Log.Message($"{fileName}: \n{strings}");
 
-            //write a language file next to your mod. must have a folder called Language next to your mod dll.
-            if (!string.IsNullOrEmpty(fileName)) {
+            if (!string.IsNullOrEmpty(fileName))
+            {
                 string path = Path.Combine(Directory.GetParent(DeadlockDashPlugin.instance.Info.Location).FullName, "Language", "en", fileName);
                 File.WriteAllText(path, strings);
             }
 
-            //empty the output each time this is printed, so you can print multiple language files
-            TokensOutput = "";
+            TokensOutput = string.Empty;
         }
     }
 }

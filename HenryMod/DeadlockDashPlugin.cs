@@ -1,8 +1,6 @@
-﻿using BepInEx;
-using DeadlockDash.Survivors.DeadlockDash;
+using BepInEx;
 using R2API.Utils;
 using RoR2;
-using System.Collections.Generic;
 using System.Security;
 using System.Security.Permissions;
 
@@ -27,17 +25,13 @@ namespace DeadlockDash
         void Awake()
         {
             instance = this;
-
-            //easy to use logger
             Log.Init(Logger);
 
-            // used when you want to properly set up language folders
+            Modules.Config.Init();
             Modules.Language.Init();
-
-            // character initialization
-            new DeadlockDashSurvivor().Initialize();
-
-            // make a content pack and add it. this has to be last
+            Content.DeadlockDashBuffs.Init();
+            Content.DeadlockDashLanguage.Init();
+            Content.DeadlockDashStates.Init();
             new Modules.ContentPacks().Initialize();
         }
     }
