@@ -1,4 +1,5 @@
 using BepInEx.Configuration;
+using RoR2.Skills;
 using UnityEngine;
 
 namespace DeadlockDash.Modules
@@ -13,6 +14,14 @@ namespace DeadlockDash.Modules
             ConfigFile config = DeadlockDashPlugin.instance.Config;
             DashKeybind = config.Bind("Keybinds", "Deadlock Dash", new KeyboardShortcut(KeyCode.C), "Custom keybind used to trigger Deadlock Dash.");
             DashCooldown = config.Bind("Gameplay", "Deadlock Dash Cooldown", 4f, "Base cooldown used by the injected Deadlock Dash skill.");
+        }
+
+        public static void ApplyToSkill(SkillDef skillDef)
+        {
+            if (skillDef != null)
+            {
+                skillDef.baseRechargeInterval = DashCooldown.Value;
+            }
         }
 
         public static bool GetKeyPressed(ConfigEntry<KeyboardShortcut> entry)
