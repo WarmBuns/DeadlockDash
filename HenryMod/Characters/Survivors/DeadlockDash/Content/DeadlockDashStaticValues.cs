@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace HenryMod.Survivors.Henry
+namespace DeadlockDash.Survivors.DeadlockDash
 {
-    public static class HenryStaticValues
+    public static class DeadlockDashStaticValues
     {
         public const float swordDamageCoefficient = 2.8f;
 

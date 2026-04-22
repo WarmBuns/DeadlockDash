@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HenryMod.Modules
+namespace DeadlockDash.Modules
 {
     internal static class ItemDisplays
     {

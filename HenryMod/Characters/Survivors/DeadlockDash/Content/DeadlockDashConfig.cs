@@ -1,9 +1,9 @@
 ﻿using BepInEx.Configuration;
-using HenryMod.Modules;
+using DeadlockDash.Modules;
 
-namespace HenryMod.Survivors.Henry
+namespace DeadlockDash.Survivors.DeadlockDash
 {
-    public static class HenryConfig
+    public static class DeadlockDashConfig
     {
         public static ConfigEntry<bool> someConfigBool;
         public static ConfigEntry<float> someConfigFloat;
@@ -11,7 +11,7 @@ namespace HenryMod.Survivors.Henry
 
         public static void Init()
         {
-            string section = "Henry";
+            string section = "DeadlockDash";
 
             someConfigBool = Config.BindAndOptions(
                 section,

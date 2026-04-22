@@ -1,8 +1,8 @@
-﻿using HenryMod.Modules.BaseStates;
+using DeadlockDash.Modules.BaseStates;
 using RoR2;
 using UnityEngine;
 
-namespace HenryMod.Survivors.Henry.SkillStates
+namespace DeadlockDash.Survivors.DeadlockDash.SkillStates
 {
     public class SlashCombo : BaseMeleeAttack
     {
@@ -11,7 +11,7 @@ namespace HenryMod.Survivors.Henry.SkillStates
             hitboxGroupName = "SwordGroup";
 
             damageType = DamageTypeCombo.GenericPrimary;
-            damageCoefficient = HenryStaticValues.swordDamageCoefficient;
+            damageCoefficient = DeadlockDashStaticValues.swordDamageCoefficient;
             procCoefficient = 1f;
             pushForce = 300f;
             bonusForce = Vector3.zero;
@@ -33,10 +33,10 @@ namespace HenryMod.Survivors.Henry.SkillStates
             hitSoundString = "";
             muzzleString = swingIndex % 2 == 0 ? "SwingLeft" : "SwingRight";
             playbackRateParam = "Slash.playbackRate";
-            swingEffectPrefab = HenryAssets.swordSwingEffect;
-            hitEffectPrefab = HenryAssets.swordHitImpactEffect;
+            swingEffectPrefab = DeadlockDashAssets.swordSwingEffect;
+            hitEffectPrefab = DeadlockDashAssets.swordHitImpactEffect;
 
-            impactSound = HenryAssets.swordHitSoundEvent.index;
+            impactSound = DeadlockDashAssets.swordHitSoundEvent.index;
 
             base.OnEnter();
         }

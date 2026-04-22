@@ -1,7 +1,7 @@
 ﻿using EntityStates;
 using System;
 
-namespace HenryMod.Modules.BaseStates
+namespace DeadlockDash.Modules.BaseStates
 {
     //see example skills below
     public abstract class BaseTimedSkillState : BaseSkillState

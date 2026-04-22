@@ -1,8 +1,8 @@
-﻿using HenryMod.Survivors.Henry.SkillStates;
+using DeadlockDash.Survivors.DeadlockDash.SkillStates;
 
-namespace HenryMod.Survivors.Henry
+namespace DeadlockDash.Survivors.DeadlockDash
 {
-    public static class HenryStates
+    public static class DeadlockDashStates
     {
         public static void Init()
         {

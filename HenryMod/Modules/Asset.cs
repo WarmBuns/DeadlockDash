@@ -9,7 +9,7 @@ using RoR2.UI;
 using RoR2.Projectile;
 using Path = System.IO.Path;
 
-namespace HenryMod.Modules
+namespace DeadlockDash.Modules
 {
     internal static class Asset
     {
@@ -19,12 +19,6 @@ namespace HenryMod.Modules
         internal static AssetBundle LoadAssetBundle(string bundleName)
         {
 
-            if (bundleName == "myassetbundle")
-            {
-                Log.Error($"AssetBundle name hasn't been changed. not loading any assets to avoid conflicts.\nMake sure to rename your assetbundle filename and rename the AssetBundleName field in your character setup code ");
-                return null;
-            }
-
             if (loadedBundles.ContainsKey(bundleName))
             {
                 return loadedBundles[bundleName];
@@ -33,7 +27,7 @@ namespace HenryMod.Modules
             AssetBundle assetBundle = null;
             try
             {
-                assetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(HenryPlugin.instance.Info.Location), "AssetBundles", bundleName));
+                assetBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(DeadlockDashPlugin.instance.Info.Location), "AssetBundles", bundleName));
             }
             catch (System.Exception e)
             {

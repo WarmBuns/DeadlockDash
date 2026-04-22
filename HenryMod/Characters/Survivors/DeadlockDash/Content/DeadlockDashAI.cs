@@ -2,9 +2,9 @@
 using RoR2.CharacterAI;
 using UnityEngine;
 
-namespace HenryMod.Survivors.Henry
+namespace DeadlockDash.Survivors.DeadlockDash
 {
-    public static class HenryAI
+    public static class DeadlockDashAI
     {
         public static void Init(GameObject bodyPrefab, string masterName)
         {

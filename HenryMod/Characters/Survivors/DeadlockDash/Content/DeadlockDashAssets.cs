@@ -1,12 +1,12 @@
 ﻿using RoR2;
 using UnityEngine;
-using HenryMod.Modules;
+using DeadlockDash.Modules;
 using System;
 using RoR2.Projectile;
 
-namespace HenryMod.Survivors.Henry
+namespace DeadlockDash.Survivors.DeadlockDash
 {
-    public static class HenryAssets
+    public static class DeadlockDashAssets
     {
         // particle effects
         public static GameObject swordSwingEffect;

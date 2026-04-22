@@ -1,4 +1,4 @@
-﻿namespace HenryMod.Modules
+namespace DeadlockDash.Modules
 {
     internal static class Tokens
     {

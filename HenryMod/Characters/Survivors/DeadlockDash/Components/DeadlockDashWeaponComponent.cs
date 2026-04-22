@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace HenryMod.Survivors.Henry.Components
+namespace DeadlockDash.Survivors.DeadlockDash.Components
 {
-    internal class HenryWeaponComponent : MonoBehaviour
+    internal class DeadlockDashWeaponComponent : MonoBehaviour
     {
         private void Awake()
         {
