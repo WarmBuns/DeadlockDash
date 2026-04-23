@@ -11,15 +11,33 @@ namespace DeadlockDash.Components
 
         private CharacterBody body;
         private LocalUser localUser;
+        private bool loggedMissingBody;
+        private bool loggedMissingSkillDef;
 
         private void Awake()
         {
-            body = GetComponent<CharacterBody>();
+            if (!TryGetComponent(out body))
+            {
+                Log.Error($"DeadlockDashInputDriver on '{gameObject.name}' is missing CharacterBody.");
+                loggedMissingBody = true;
+                enabled = false;
+            }
         }
 
         private void Update()
         {
-            if (!body || !body.hasEffectiveAuthority || dashSkill == null)
+            if (!body)
+            {
+                if (!loggedMissingBody)
+                {
+                    Log.Error($"DeadlockDashInputDriver on '{gameObject.name}' lost its CharacterBody reference.");
+                    loggedMissingBody = true;
+                }
+
+                return;
+            }
+
+            if (!body || !body.isActiveAndEnabled || !body.hasEffectiveAuthority || dashSkill == null || !dashSkill.enabled)
             {
                 return;
             }
@@ -32,8 +50,23 @@ namespace DeadlockDash.Components
 
             if (Modules.Config.GetKeyPressed(Modules.Config.DashKeybind))
             {
+                if (dashSkill.skillDef == null)
+                {
+                    if (!loggedMissingSkillDef)
+                    {
+                        Log.Warning($"Dash input received on '{body.name}' but DeadlockDashSkill has no SkillDef assigned.");
+                        loggedMissingSkillDef = true;
+                    }
+
+                    return;
+                }
+
+                loggedMissingSkillDef = false;
                 Modules.Config.ApplyToSkill(dashSkill.skillDef);
-                dashSkill.ExecuteIfReady();
+                if (dashSkill.CanExecute())
+                {
+                    dashSkill.ExecuteIfReady();
+                }
             }
         }
 

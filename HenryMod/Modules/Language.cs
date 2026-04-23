@@ -23,15 +23,45 @@ namespace DeadlockDash.Modules
 
         private static void CollectLanguageRootFolders(List<string> folders)
         {
-            string path = Path.Combine(Path.GetDirectoryName(DeadlockDashPlugin.instance.Info.Location), "Language");
+            if (DeadlockDashPlugin.instance == null)
+            {
+                Log.Warning("CollectLanguageRootFolders called before plugin instance was initialized.");
+                return;
+            }
+
+            string pluginLocation = DeadlockDashPlugin.instance.Info?.Location;
+            if (string.IsNullOrEmpty(pluginLocation))
+            {
+                Log.Warning("CollectLanguageRootFolders could not resolve plugin location.");
+                return;
+            }
+
+            string pluginDirectory = Path.GetDirectoryName(pluginLocation);
+            if (string.IsNullOrEmpty(pluginDirectory))
+            {
+                Log.Warning($"CollectLanguageRootFolders could not resolve plugin directory from '{pluginLocation}'.");
+                return;
+            }
+
+            string path = Path.Combine(pluginDirectory, "Language");
             if (Directory.Exists(path))
             {
                 folders.Add(path);
+            }
+            else
+            {
+                Log.Warning($"Configured language folder does not exist at '{path}'.");
             }
         }
 
         internal static void Add(string token, string text)
         {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                Log.Warning("Attempted to add language text with an empty token.");
+                return;
+            }
+
             if (!usingLanguageFolder)
             {
                 LanguageAPI.Add(token, text);
@@ -57,7 +87,30 @@ namespace DeadlockDash.Modules
 
             if (!string.IsNullOrEmpty(fileName))
             {
-                string path = Path.Combine(Directory.GetParent(DeadlockDashPlugin.instance.Info.Location).FullName, "Language", "en", fileName);
+                if (DeadlockDashPlugin.instance == null)
+                {
+                    Log.Warning($"PrintOutput('{fileName}') was called before plugin instance initialization.");
+                    TokensOutput = string.Empty;
+                    return;
+                }
+
+                string pluginLocation = DeadlockDashPlugin.instance.Info?.Location;
+                if (string.IsNullOrEmpty(pluginLocation))
+                {
+                    Log.Warning($"PrintOutput('{fileName}') could not resolve plugin location.");
+                    TokensOutput = string.Empty;
+                    return;
+                }
+
+                DirectoryInfo parentDirectory = Directory.GetParent(pluginLocation);
+                if (parentDirectory == null)
+                {
+                    Log.Warning($"PrintOutput('{fileName}') could not resolve plugin parent directory from '{pluginLocation}'.");
+                    TokensOutput = string.Empty;
+                    return;
+                }
+
+                string path = Path.Combine(parentDirectory.FullName, "Language", "en", fileName);
                 File.WriteAllText(path, strings);
             }
 

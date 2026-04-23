@@ -21,17 +21,26 @@ namespace DeadlockDash.Modules {
 
         public void Initialize()
         {
+            Log.Debug($"Initializing content pack provider '{identifier}'.");
             ContentManager.collectContentPackProviders += ContentManager_collectContentPackProviders;
         }
 
         private void ContentManager_collectContentPackProviders(ContentManager.AddContentPackProviderDelegate addContentPackProvider)
         {
+            if (addContentPackProvider == null)
+            {
+                Log.Warning("ContentManager_collectContentPackProviders received a null delegate.");
+                return;
+            }
+
             addContentPackProvider(this);
         }
 
         public System.Collections.IEnumerator LoadStaticContentAsync(LoadStaticContentAsyncArgs args)
         {
             this.contentPack.identifier = this.identifier;
+
+            Log.Info($"Loading static content. SkillDefs={skillDefs.Count}, SkillFamilies={skillFamilies.Count}, EntityStates={entityStates.Count}, BuffDefs={buffDefs.Count}, EffectDefs={effectDefs.Count}, NetworkSoundEventDefs={networkSoundEventDefs.Count}.");
 
             contentPack.skillDefs.Add(skillDefs.ToArray());
             contentPack.skillFamilies.Add(skillFamilies.ToArray());
@@ -47,6 +56,12 @@ namespace DeadlockDash.Modules {
 
         public System.Collections.IEnumerator GenerateContentPackAsync(GetContentPackAsyncArgs args)
         {
+            if (args.output == null)
+            {
+                Log.Warning("GenerateContentPackAsync received a null output ContentPack.");
+                yield break;
+            }
+
             ContentPack.Copy(this.contentPack, args.output);
             args.ReportProgress(1f);
             yield break;

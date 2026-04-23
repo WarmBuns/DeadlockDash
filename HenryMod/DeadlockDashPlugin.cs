@@ -26,6 +26,7 @@ namespace DeadlockDash
         {
             instance = this;
             Log.Init(Logger);
+            Log.Info($"Initializing {MODNAME} v{MODVERSION}.");
 
             Modules.Config.Init();
             Modules.Language.Init();

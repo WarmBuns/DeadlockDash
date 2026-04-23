@@ -14,6 +14,12 @@ namespace DeadlockDash.Modules
 
         public static GenericSkill CreateGenericSkillWithSkillFamily(GameObject targetPrefab, string genericSkillName, string familyName, bool hidden = false)
         {
+            if (!targetPrefab)
+            {
+                Log.Warning($"CreateGenericSkillWithSkillFamily called with a null target prefab for skill '{genericSkillName}'.");
+                return null;
+            }
+
             GenericSkill skill = targetPrefab.AddComponent<GenericSkill>();
             skill.skillName = genericSkillName;
             skill.hideInCharacterSelect = hidden;
@@ -31,6 +37,18 @@ namespace DeadlockDash.Modules
 
         public static void AddSkillToFamily(SkillFamily skillFamily, SkillDef skillDef, UnlockableDef unlockableDef = null)
         {
+            if (!skillFamily)
+            {
+                Log.Warning($"AddSkillToFamily called with a null SkillFamily for skill '{skillDef?.skillName ?? "<null>"}'.");
+                return;
+            }
+
+            if (!skillDef)
+            {
+                Log.Warning("AddSkillToFamily called with a null SkillDef.");
+                return;
+            }
+
             Array.Resize(ref skillFamily.variants, skillFamily.variants.Length + 1);
 
             skillFamily.variants[skillFamily.variants.Length - 1] = new SkillFamily.Variant
@@ -56,6 +74,12 @@ namespace DeadlockDash.Modules
 
         public static T CreateSkillDef<T>(SkillDefInfo skillDefInfo) where T : SkillDef
         {
+            if (skillDefInfo == null)
+            {
+                Log.Warning($"CreateSkillDef<{typeof(T).Name}> called with null SkillDefInfo.");
+                return null;
+            }
+
             //pass in a type for a custom skilldef, e.g. HuntressTrackingSkillDef
             T skillDef = ScriptableObject.CreateInstance<T>();
 
