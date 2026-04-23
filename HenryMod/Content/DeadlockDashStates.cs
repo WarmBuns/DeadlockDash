@@ -166,6 +166,12 @@ namespace DeadlockDash.Content
 
         private static void AddDashToSurvivors()
         {
+            if (!DashSkillDef)
+            {
+                Log.Error("AddDashToSurvivors was called before DeadlockDash SkillDef was initialized.");
+                return;
+            }
+
             int injectedCount = 0;
             int malformedCount = 0;
 
@@ -186,11 +192,6 @@ namespace DeadlockDash.Content
                 {
                     malformedCount++;
                     Log.Warning($"Skipping DeadlockDash injection for '{bodyPrefab.name}' because it is missing SkillLocator.");
-                    continue;
-                }
-
-                if (bodyPrefab.TryGetComponent(out DeadlockDashInputDriver existingInputDriver) || skillLocator.FindSkill(DashSkillSlotName) != null)
-                {
                     continue;
                 }
 
