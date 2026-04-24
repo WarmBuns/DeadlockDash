@@ -21,6 +21,9 @@ namespace DeadlockDash.Components
                 Log.Error($"DeadlockDashInputDriver on '{gameObject.name}' is missing CharacterBody.");
                 loggedMissingBody = true;
                 enabled = false;
+            } else
+            {
+                Log.Info("We're awake!");
             }
         }
 
@@ -39,16 +42,19 @@ namespace DeadlockDash.Components
 
             if (!body || !body.isActiveAndEnabled || !body.hasEffectiveAuthority || dashSkill == null || !dashSkill.enabled)
             {
+                Log.Warning("Warned on 2nd if in Update");
                 return;
             }
 
-            FindLocalUser();
-            if (localUser == null || localUser.isUIFocused)
-            {
-                return;
-            }
+            //FindLocalUser();
+            //if (localUser == null || localUser.isUIFocused)
+            //{
+            //    return;
+            //}
 
-            if (Modules.Config.GetKeyPressed(Modules.Config.DashKeybind))
+
+
+            if (Input.GetKeyDown(KeyCode.V))
             {
                 if (dashSkill.skillDef == null)
                 {
@@ -62,7 +68,7 @@ namespace DeadlockDash.Components
                 }
 
                 loggedMissingSkillDef = false;
-                Modules.Config.ApplyToSkill(dashSkill.skillDef);
+                //Modules.Config.ApplyToSkill(dashSkill.skillDef);
                 if (dashSkill.CanExecute())
                 {
                     dashSkill.ExecuteIfReady();

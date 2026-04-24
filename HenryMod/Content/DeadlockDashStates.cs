@@ -25,9 +25,9 @@ namespace DeadlockDash.Content
                 return;
             }
 
-            CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
-            On.RoR2.CharacterBody.OnSkillCooldown += CharacterBody_OnSkillCooldown;
-            RoR2Application.onLoad += AddDashToSurvivors;
+            // Focusing on getting the mod working for now
+            //CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
+            //On.RoR2.CharacterBody.OnSkillCooldown += CharacterBody_OnSkillCooldown;
         }
 
         private static SkillDef CreateDashSkillDef()
@@ -164,7 +164,8 @@ namespace DeadlockDash.Content
             }
         }
 
-        private static void AddDashToSurvivors()
+        [SystemInitializer(typeof(SurvivorCatalog))]
+        public static void AddDashToSurvivors()
         {
             if (!DashSkillDef)
             {
@@ -180,11 +181,15 @@ namespace DeadlockDash.Content
                 GameObject bodyPrefab = survivorDef?.bodyPrefab;
                 if (!bodyPrefab)
                 {
+                    Log.Warning($"Skipping DeadlockDash injection for '{survivorDef}' because it has a null bodyPrefab.");
+                    malformedCount++;
                     continue;
                 }
 
                 if (EntityStateMachine.FindByCustomName(bodyPrefab, "Body") == null)
                 {
+                    Log.Warning($"Skipping DeadlockDash injection for '{bodyPrefab.name}' because it is missing a 'Body' EntityStateMachine.");
+                    malformedCount++;
                     continue;
                 }
 
@@ -213,7 +218,17 @@ namespace DeadlockDash.Content
 
                 DeadlockDashInputDriver inputDriver = bodyPrefab.AddComponent<DeadlockDashInputDriver>();
                 inputDriver.dashSkill = dashSkill;
-                injectedCount++;
+
+                if (!inputDriver || bodyPrefab.TryGetComponent<DeadlockDashInputDriver>(out _) == false)
+                {
+                    malformedCount++;
+                    Log.Warning($"Failed to add DeadlockDashInputDriver to '{bodyPrefab.name}'.");
+                    continue;
+                } else
+                {
+                    Log.Debug($"Injected DeadlockDash into '{bodyPrefab.name}' successfully.");
+                    injectedCount++;
+                }
             }
 
             Log.Info($"DeadlockDash injection complete. Injected={injectedCount}, Malformed={malformedCount}.");
