@@ -1,6 +1,8 @@
 using EntityStates;
 using RoR2;
+using RoR2.ContentManagement;
 using RoR2.Skills;
+using System.Collections;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -11,7 +13,7 @@ namespace DeadlockDash.Content
 {
     internal static class DeadlockDashStates
     {
-        private const string DashSkillSlotName = "DeadlockDashSkill";
+        internal const string DashSkillSlotName = "DeadlockDashSkill";
 
         internal static SkillDef DashSkillDef { get; private set; }
 
@@ -24,18 +26,26 @@ namespace DeadlockDash.Content
                 Log.Error("Failed to create DeadlockDash SkillDef.");
                 return;
             }
-
-            On.RoR2.SurvivorCatalog.Init += SurvivorCatalog_Init;
+            // On.RoR2.SurvivorCatalog.Init += SurvivorCatalog_Init;
+            // TODO: Trying BodyCatalog instead
+            On.RoR2.BodyCatalog.Init += BodyCatalog_Init;
 
             // Focusing on getting the mod working for now
             //CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
             //On.RoR2.CharacterBody.OnSkillCooldown += CharacterBody_OnSkillCooldown;
         }
 
-        private static void SurvivorCatalog_Init(On.RoR2.SurvivorCatalog.orig_Init orig)
+
+        // private static void SurvivorCatalog_Init(On.RoR2.SurvivorCatalog.orig_Init orig)
+        // {
+        //     orig();
+        //     AddDashToSurvivors();
+        // }
+
+        private static IEnumerator BodyCatalog_Init(On.RoR2.BodyCatalog.orig_Init orig)
         {
-            orig();
             AddDashToSurvivors();
+            return orig();
         }
 
         private static SkillDef CreateDashSkillDef()
@@ -172,7 +182,6 @@ namespace DeadlockDash.Content
             }
         }
 
-        // [SystemInitializer(typeof(SurvivorCatalog))]
         public static void AddDashToSurvivors()
         {
             if (!DashSkillDef)
@@ -181,10 +190,17 @@ namespace DeadlockDash.Content
                 return;
             }
 
+            SurvivorDef[] survivorDefs = ContentManager.survivorDefs;
+            if (survivorDefs == null || survivorDefs.Length == 0)
+            {
+                Log.Warning("DeadlockDash injection skipped because ContentManager.survivorDefs was empty.");
+                return;
+            }
+
             int injectedCount = 0;
             int malformedCount = 0;
 
-            foreach (SurvivorDef survivorDef in SurvivorCatalog.allSurvivorDefs)
+            foreach (SurvivorDef survivorDef in survivorDefs)
             {
                 GameObject bodyPrefab = survivorDef?.bodyPrefab;
                 if (!bodyPrefab)
@@ -208,15 +224,18 @@ namespace DeadlockDash.Content
                     continue;
                 }
 
-                GenericSkill dashSkill = Modules.Skills.CreateGenericSkillWithSkillFamily(bodyPrefab, DashSkillSlotName, "UniversalSkills", true);
+                GenericSkill dashSkill = skillLocator.FindSkill(DashSkillSlotName);
                 if (!dashSkill)
                 {
-                    malformedCount++;
-                    Log.Warning($"Failed to create DeadlockDashSkill GenericSkill for '{bodyPrefab.name}'.");
-                    continue;
+                    dashSkill = Modules.Skills.CreateGenericSkillWithSkillFamily(bodyPrefab, DashSkillSlotName, "UniversalSkills", true);
+                    if (!dashSkill)
+                    {
+                        malformedCount++;
+                        Log.Warning($"Failed to create DeadlockDashSkill GenericSkill for '{bodyPrefab.name}'.");
+                        continue;
+                    }
                 }
 
-                Modules.Skills.AddSkillToFamily(dashSkill.skillFamily, DashSkillDef);
                 if (dashSkill.skillFamily == null || dashSkill.skillFamily.variants == null)
                 {
                     malformedCount++;
@@ -224,10 +243,20 @@ namespace DeadlockDash.Content
                     continue;
                 }
 
-                DeadlockDashInputDriver inputDriver = bodyPrefab.AddComponent<DeadlockDashInputDriver>();
+                if (!SkillFamilyContainsDef(dashSkill.skillFamily, DashSkillDef))
+                {
+                    Modules.Skills.AddSkillToFamily(dashSkill.skillFamily, DashSkillDef);
+                }
+
+                DeadlockDashInputDriver inputDriver = bodyPrefab.GetComponent<DeadlockDashInputDriver>();
+                if (!inputDriver)
+                {
+                    inputDriver = bodyPrefab.AddComponent<DeadlockDashInputDriver>();
+                }
+
                 inputDriver.dashSkill = dashSkill;
 
-                if (!inputDriver || bodyPrefab.TryGetComponent<DeadlockDashInputDriver>(out _) == false)
+                if (!inputDriver)
                 {
                     malformedCount++;
                     Log.Warning($"Failed to add DeadlockDashInputDriver to '{bodyPrefab.name}'.");
@@ -240,6 +269,24 @@ namespace DeadlockDash.Content
             }
 
             Log.Info($"DeadlockDash injection complete. Injected={injectedCount}, Malformed={malformedCount}.");
+        }
+
+        private static bool SkillFamilyContainsDef(SkillFamily skillFamily, SkillDef skillDef)
+        {
+            if (!skillFamily || skillFamily.variants == null || !skillDef)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < skillFamily.variants.Length; i++)
+            {
+                if (skillFamily.variants[i].skillDef == skillDef)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

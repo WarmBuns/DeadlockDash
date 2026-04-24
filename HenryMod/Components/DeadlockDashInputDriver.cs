@@ -26,6 +26,15 @@ namespace DeadlockDash.Components
             {
                 Log.Info("We're awake!");
             }
+
+            if (!dashSkill)
+            {
+                dashSkill = ResolveDashSkill();
+                if (!dashSkill)
+                {
+                    Log.Warning($"DeadlockDashInputDriver on '{gameObject.name}' could not resolve '{Content.DeadlockDashStates.DashSkillSlotName}' in Awake.");
+                }
+            }
         }
 
         public void Update()
@@ -112,6 +121,29 @@ namespace DeadlockDash.Components
             }
 
             localUser = null;
+        }
+
+        private GenericSkill ResolveDashSkill()
+        {
+            if (TryGetComponent(out SkillLocator skillLocator))
+            {
+                GenericSkill locatedSkill = skillLocator.FindSkill(Content.DeadlockDashStates.DashSkillSlotName);
+                if (locatedSkill)
+                {
+                    return locatedSkill;
+                }
+            }
+
+            GenericSkill[] skills = GetComponents<GenericSkill>();
+            for (int i = 0; i < skills.Length; i++)
+            {
+                if (skills[i] && string.Equals(skills[i].skillName, Content.DeadlockDashStates.DashSkillSlotName, System.StringComparison.Ordinal))
+                {
+                    return skills[i];
+                }
+            }
+
+            return null;
         }
     }
 }
