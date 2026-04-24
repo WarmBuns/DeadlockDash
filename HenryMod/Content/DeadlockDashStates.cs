@@ -25,9 +25,17 @@ namespace DeadlockDash.Content
                 return;
             }
 
+            On.RoR2.SurvivorCatalog.Init += SurvivorCatalog_Init;
+
             // Focusing on getting the mod working for now
             //CharacterBody.onBodyStartGlobal += CharacterBody_onBodyStartGlobal;
             //On.RoR2.CharacterBody.OnSkillCooldown += CharacterBody_OnSkillCooldown;
+        }
+
+        private static void SurvivorCatalog_Init(On.RoR2.SurvivorCatalog.orig_Init orig)
+        {
+            orig();
+            AddDashToSurvivors();
         }
 
         private static SkillDef CreateDashSkillDef()
@@ -164,7 +172,7 @@ namespace DeadlockDash.Content
             }
         }
 
-        [SystemInitializer(typeof(SurvivorCatalog))]
+        // [SystemInitializer(typeof(SurvivorCatalog))]
         public static void AddDashToSurvivors()
         {
             if (!DashSkillDef)
