@@ -7,14 +7,15 @@ namespace DeadlockDash.Components
     [RequireComponent(typeof(CharacterBody))]
     internal class DeadlockDashInputDriver : MonoBehaviour
     {
-        internal GenericSkill dashSkill;
+        [SerializeField]
+        public GenericSkill dashSkill;
 
         private CharacterBody body;
         private LocalUser localUser;
         private bool loggedMissingBody;
         private bool loggedMissingSkillDef;
 
-        private void Awake()
+        public void Awake()
         {
             if (!TryGetComponent(out body))
             {
@@ -27,7 +28,7 @@ namespace DeadlockDash.Components
             }
         }
 
-        private void Update()
+        public void Update()
         {
             if (!body)
             {
@@ -40,9 +41,27 @@ namespace DeadlockDash.Components
                 return;
             }
 
-            if (!body || !body.isActiveAndEnabled || !body.hasEffectiveAuthority || dashSkill == null || !dashSkill.enabled)
+            if (!body || !body.isActiveAndEnabled)
             {
-                Log.Warning("Warned on 2nd if in Update");
+                Log.Warning("!body || !body.isActiveAndEnabled");
+                return;
+            }
+
+            if (!body.hasEffectiveAuthority)
+            {
+                Log.Warning("!body.hasEffectiveAuthority");
+                return;
+            }
+
+            if ( dashSkill == null )
+            {
+                Log.Warning("dashSkill == null");
+                return;
+            }
+
+            if (!dashSkill.enabled)
+            {
+                Log.Warning("!dashSkill.enabled");
                 return;
             }
 
@@ -76,7 +95,7 @@ namespace DeadlockDash.Components
             }
         }
 
-        private void FindLocalUser()
+        public void FindLocalUser()
         {
             if (localUser != null && localUser.cachedBody == body)
             {
