@@ -23,13 +23,13 @@ namespace DeadlockDash.Modules
 
         private static void CollectLanguageRootFolders(List<string> folders)
         {
-            if (DeadlockDashPlugin.instance == null)
+            if (DeadlockSkillsPlugin.instance == null)
             {
                 Log.Warning("CollectLanguageRootFolders called before plugin instance was initialized.");
                 return;
             }
 
-            string pluginLocation = DeadlockDashPlugin.instance.Info?.Location;
+            string pluginLocation = DeadlockSkillsPlugin.instance.Info?.Location;
             if (string.IsNullOrEmpty(pluginLocation))
             {
                 Log.Warning("CollectLanguageRootFolders could not resolve plugin location.");
@@ -87,14 +87,14 @@ namespace DeadlockDash.Modules
 
             if (!string.IsNullOrEmpty(fileName))
             {
-                if (DeadlockDashPlugin.instance == null)
+                if (DeadlockSkillsPlugin.instance == null)
                 {
                     Log.Warning($"PrintOutput('{fileName}') was called before plugin instance initialization.");
                     TokensOutput = string.Empty;
                     return;
                 }
 
-                string pluginLocation = DeadlockDashPlugin.instance.Info?.Location;
+                string pluginLocation = DeadlockSkillsPlugin.instance.Info?.Location;
                 if (string.IsNullOrEmpty(pluginLocation))
                 {
                     Log.Warning($"PrintOutput('{fileName}') could not resolve plugin location.");

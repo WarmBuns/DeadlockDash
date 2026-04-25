@@ -5,7 +5,7 @@ using UnityEngine;
 namespace DeadlockDash.Components
 {
     [RequireComponent(typeof(CharacterBody))]
-    internal class DeadlockDashInputDriver : MonoBehaviour
+    internal class DeadlockSkillsInputDriver : MonoBehaviour
     {
         [SerializeField]
         public GenericSkill dashSkill;
@@ -19,12 +19,9 @@ namespace DeadlockDash.Components
         {
             if (!TryGetComponent(out body))
             {
-                Log.Error($"DeadlockDashInputDriver on '{gameObject.name}' is missing CharacterBody.");
+                Log.Error($"DeadlockSkillsInputDriver on '{gameObject.name}' is missing CharacterBody.");
                 loggedMissingBody = true;
                 enabled = false;
-            } else
-            {
-                Log.Info("We're awake!");
             }
 
             if (!dashSkill)
@@ -74,13 +71,11 @@ namespace DeadlockDash.Components
                 return;
             }
 
-            //FindLocalUser();
-            //if (localUser == null || localUser.isUIFocused)
-            //{
-            //    return;
-            //}
-
-
+            FindLocalUser();
+            if (localUser == null || localUser.isUIFocused)
+            {
+                return;
+            }
 
             if (Input.GetKeyDown(KeyCode.V))
             {
@@ -96,6 +91,7 @@ namespace DeadlockDash.Components
                 }
 
                 loggedMissingSkillDef = false;
+                // TODO: Debating if we need a static cooldown or nah, lets see what people say
                 //Modules.Config.ApplyToSkill(dashSkill.skillDef);
                 if (dashSkill.CanExecute())
                 {

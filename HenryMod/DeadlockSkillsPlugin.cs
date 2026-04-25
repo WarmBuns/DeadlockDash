@@ -12,7 +12,7 @@ namespace DeadlockDash
     //[BepInDependency("com.rune580.riskofoptions", BepInDependency.DependencyFlags.SoftDependency)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInPlugin(MODUID, MODNAME, MODVERSION)]
-    public class DeadlockDashPlugin : BaseUnityPlugin
+    public class DeadlockSkillsPlugin : BaseUnityPlugin
     {
         public const string MODUID = "com.Buns.DeadlockDash";
         public const string MODNAME = "DeadlockDash";
@@ -20,9 +20,9 @@ namespace DeadlockDash
 
         public const string DEVELOPER_PREFIX = "BUNS";
 
-        public static DeadlockDashPlugin instance;
+        public static DeadlockSkillsPlugin instance;
 
-        void Awake()
+        public void Awake()
         {
             instance = this;
             Log.Init(Logger);
