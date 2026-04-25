@@ -2,6 +2,7 @@ using EntityStates;
 using RoR2;
 using RoR2.ContentManagement;
 using RoR2.Skills;
+using R2API;
 using System.Collections;
 using System;
 using UnityEngine;
@@ -11,13 +12,13 @@ using DeadlockDashState = DeadlockDash.SkillStates.DeadlockDash;
 
 namespace DeadlockDash.Content
 {
-    internal static class DeadlockDashStates
+    public static class DeadlockSkillStates
     {
-        internal const string DashSkillSlotName = "DeadlockDashSkill";
+        public const string DashSkillSlotName = "DeadlockDashSkill";
 
-        internal static SkillDef DashSkillDef { get; private set; }
+        public static SkillDef DashSkillDef { get; private set; }
 
-        internal static void Init()
+        public static void Init()
         {
             Modules.Content.AddEntityState(typeof(DeadlockDashState));
             DashSkillDef = CreateDashSkillDef();
@@ -28,8 +29,8 @@ namespace DeadlockDash.Content
             }
             
             On.RoR2.SurvivorCatalog.Init += SurvivorCatalog_Init;
-        }
 
+        }
 
         private static void SurvivorCatalog_Init(On.RoR2.SurvivorCatalog.orig_Init orig)
         {

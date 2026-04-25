@@ -29,7 +29,7 @@ namespace DeadlockDash.Components
                 dashSkill = ResolveDashSkill();
                 if (!dashSkill)
                 {
-                    Log.Warning($"DeadlockDashInputDriver on '{gameObject.name}' could not resolve '{Content.DeadlockDashStates.DashSkillSlotName}' in Awake.");
+                    Log.Warning($"DeadlockDashInputDriver on '{gameObject.name}' could not resolve '{Content.DeadlockSkillStates.DashSkillSlotName}' in Awake.");
                 }
             }
         }
@@ -123,7 +123,7 @@ namespace DeadlockDash.Components
         {
             if (TryGetComponent(out SkillLocator skillLocator))
             {
-                GenericSkill locatedSkill = skillLocator.FindSkill(Content.DeadlockDashStates.DashSkillSlotName);
+                GenericSkill locatedSkill = skillLocator.FindSkill(Content.DeadlockSkillStates.DashSkillSlotName);
                 if (locatedSkill)
                 {
                     return locatedSkill;
@@ -133,7 +133,7 @@ namespace DeadlockDash.Components
             GenericSkill[] skills = GetComponents<GenericSkill>();
             for (int i = 0; i < skills.Length; i++)
             {
-                if (skills[i] && string.Equals(skills[i].skillName, Content.DeadlockDashStates.DashSkillSlotName, System.StringComparison.Ordinal))
+                if (skills[i] && string.Equals(skills[i].skillName, Content.DeadlockSkillStates.DashSkillSlotName, System.StringComparison.Ordinal))
                 {
                     return skills[i];
                 }

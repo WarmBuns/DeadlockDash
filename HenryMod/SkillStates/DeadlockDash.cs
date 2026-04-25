@@ -53,8 +53,7 @@ namespace DeadlockDash.SkillStates
                 //    characterBody.RemoveBuff(Content.DeadlockDashBuffs.bdDeadlockDashReady);
                 //}
 
-                characterBody.AddTimedBuff(Content.DeadlockDashBuffs.armorBuff, 3f * duration);
-                characterBody.AddTimedBuff(RoR2Content.Buffs.HiddenInvincibility, 0.5f * duration);
+                characterBody.AddBuff(Content.DeadlockSkillsBuffs.dashBuff);
             }
         }
 
@@ -103,12 +102,17 @@ namespace DeadlockDash.SkillStates
                 cameraTargetParams.fovOverride = -1f;
             }
 
-            base.OnExit();
-
             if (characterMotor)
             {
                 characterMotor.disableAirControlUntilCollision = false;
             }
+
+            if (NetworkServer.active && characterBody)
+            {
+                characterBody.RemoveBuff(Content.DeadlockSkillsBuffs.dashBuff);
+            }
+
+            base.OnExit();
         }
 
         public override void OnSerialize(NetworkWriter writer)

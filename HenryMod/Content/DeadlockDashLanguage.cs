@@ -13,8 +13,8 @@ namespace DeadlockDash.Content
         internal static void Init()
         {
             Modules.Language.Add(SkillNameToken, "Deadlock Dash");
-            Modules.Language.Add(SkillDescriptionToken, "Dash a short distance with a burst of invulnerability.");
-            Modules.Language.Add(SkillFamilyName, "Universal Skills");
+            Modules.Language.Add(SkillDescriptionToken, "Dash a short distance gaining a small amount of armor and an attack speed buff.");
+            Modules.Language.Add(SkillFamilyName, "Deadlock Skills");
             Modules.Language.Add(DashReadyBuffNameToken, "Dash Ready");
             Modules.Language.Add(DashCooldownBuffNameToken, "Dash Cooldown");
 
