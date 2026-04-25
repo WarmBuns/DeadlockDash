@@ -24,7 +24,7 @@ namespace DeadlockDash.SkillStates
 
             if (!characterBody)
             {
-                Log.Warning("DeadlockDash entered without a CharacterBody.");
+                Log.Warning("How tf did you have this happen?");
             }
 
             if (isAuthority && inputBank && characterDirection)
@@ -39,6 +39,8 @@ namespace DeadlockDash.SkillStates
                 characterMotor.velocity.y = 0f;
                 characterMotor.velocity = forwardDirection * rollSpeed;
             }
+
+
 
             Vector3 bodyVelocity = characterMotor ? characterMotor.velocity : Vector3.zero;
             previousPosition = transform.position - bodyVelocity;
@@ -106,6 +108,8 @@ namespace DeadlockDash.SkillStates
             {
                 characterMotor.disableAirControlUntilCollision = false;
             }
+
+
 
             if (NetworkServer.active && characterBody)
             {
