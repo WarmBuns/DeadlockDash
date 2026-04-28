@@ -60,8 +60,8 @@ namespace DeadlockDash.Content
                 mustKeyPress = false,
                 isCombatSkill = false,
                 canceledFromSprinting = false,
-                cancelSprintingOnActivation = false,
-                forceSprintDuringState = true,
+                cancelSprintingOnActivation = true,
+                forceSprintDuringState = false,
             });
 
             Modules.Config.ApplyToSkill(skillDef);
