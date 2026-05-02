@@ -1,4 +1,5 @@
 using BepInEx;
+using DeadlockDash.Content;
 using R2API.Utils;
 using RoR2;
 using System.Security;
@@ -12,7 +13,7 @@ namespace DeadlockDash
     //[BepInDependency("com.rune580.riskofoptions", BepInDependency.DependencyFlags.SoftDependency)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.EveryoneNeedSameModVersion)]
     [BepInPlugin(MODUID, MODNAME, MODVERSION)]
-    public class DeadlockDashPlugin : BaseUnityPlugin
+    public class DeadlockSkillsPlugin : BaseUnityPlugin
     {
         public const string MODUID = "com.Buns.DeadlockDash";
         public const string MODNAME = "DeadlockDash";
@@ -20,9 +21,9 @@ namespace DeadlockDash
 
         public const string DEVELOPER_PREFIX = "BUNS";
 
-        public static DeadlockDashPlugin instance;
+        public static DeadlockSkillsPlugin instance;
 
-        void Awake()
+        public void Awake()
         {
             instance = this;
             Log.Init(Logger);
@@ -30,10 +31,21 @@ namespace DeadlockDash
 
             Modules.Config.Init();
             Modules.Language.Init();
-            Content.DeadlockDashBuffs.Init();
+            Content.DeadlockSkillsBuffs.Init();
             Content.DeadlockDashLanguage.Init();
-            Content.DeadlockDashStates.Init();
+            Content.DeadlockSkillStates.Init();
+            R2API.RecalculateStatsAPI.GetStatCoefficients += RecalculateStatsAPI_GetStatCoefficients;
             new Modules.ContentPacks().Initialize();
+        }
+
+        public void RecalculateStatsAPI_GetStatCoefficients(CharacterBody sender, R2API.RecalculateStatsAPI.StatHookEventArgs args)
+        {
+
+            if (sender.HasBuff(DeadlockSkillsBuffs.dashBuff))
+            {
+                args.armorAdd += 25;
+                args.attackSpeedMultAdd += 0.5f;
+            }
         }
     }
 }

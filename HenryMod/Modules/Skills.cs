@@ -20,6 +20,8 @@ namespace DeadlockDash.Modules
                 return null;
             }
 
+            Log.Info($"CreateGenericSkillWithSkillFamily called with a target prefab for skill '{genericSkillName}'.");
+
             GenericSkill skill = targetPrefab.AddComponent<GenericSkill>();
             skill.skillName = genericSkillName;
             skill.hideInCharacterSelect = hidden;

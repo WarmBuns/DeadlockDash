@@ -9,7 +9,7 @@ namespace DeadlockDash.Modules {
     internal class ContentPacks : IContentPackProvider
     {
         internal ContentPack contentPack = new ContentPack();
-        public string identifier => DeadlockDashPlugin.MODUID;
+        public string identifier => DeadlockSkillsPlugin.MODUID;
 
         public static List<SkillFamily> skillFamilies = new List<SkillFamily>();
         public static List<SkillDef> skillDefs = new List<SkillDef>();
