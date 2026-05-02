@@ -15,6 +15,7 @@ namespace DeadlockDash.Content
     public static class DeadlockSkillStates
     {
         public const string DashSkillSlotName = "DeadlockDashSkill";
+        public const string StateMachineName = "DeadlockStates";
 
         public static SkillDef DashSkillDef { get; private set; }
 
@@ -46,7 +47,7 @@ namespace DeadlockDash.Content
                 skillNameToken = DeadlockDashLanguage.SkillNameToken,
                 skillDescriptionToken = DeadlockDashLanguage.SkillDescriptionToken,
                 activationState = new SerializableEntityStateType(typeof(DeadlockDashState)),
-                activationStateMachineName = "Body",
+                activationStateMachineName = StateMachineName,
                 interruptPriority = InterruptPriority.PrioritySkill,
                 baseRechargeInterval = Modules.Config.DashCooldown.Value,
                 baseMaxStock = Mathf.Max(1, Modules.Config.DashStocks.Value),
@@ -108,12 +109,7 @@ namespace DeadlockDash.Content
                     continue;
                 }
 
-                if (EntityStateMachine.FindByCustomName(bodyPrefab, "Body") == null)
-                {
-                    Log.Warning($"Skipping DeadlockDash injection for '{bodyPrefab.name}' because it is missing a 'Body' EntityStateMachine.");
-                    malformedCount++;
-                    continue;
-                }
+                Modules.StateMachines.AddEntityStateMachine(bodyPrefab, StateMachineName);
 
                 if (!bodyPrefab.TryGetComponent(out SkillLocator skillLocator))
                 {
