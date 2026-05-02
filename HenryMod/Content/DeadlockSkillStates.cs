@@ -29,14 +29,14 @@ namespace DeadlockDash.Content
                 return;
             }
             
-            On.RoR2.SurvivorCatalog.Init += SurvivorCatalog_Init;
+            On.RoR2.BodyCatalog.Init += BodyCatalog_Init;
 
         }
 
-        private static void SurvivorCatalog_Init(On.RoR2.SurvivorCatalog.orig_Init orig)
+        private static IEnumerator BodyCatalog_Init(On.RoR2.BodyCatalog.orig_Init orig)
         {
-            orig();
             AddDashToSurvivors();
+            return orig();
         }
 
         private static SkillDef CreateDashSkillDef()
