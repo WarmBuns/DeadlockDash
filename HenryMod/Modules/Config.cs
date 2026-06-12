@@ -1,4 +1,7 @@
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
+using RiskOfOptions;
+using RiskOfOptions.Options;
 using RoR2.Skills;
 using UnityEngine;
 
@@ -16,6 +19,16 @@ namespace DeadlockDash.Modules
             DashKeybind = config.Bind("Keybinds", "Deadlock Dash", new KeyboardShortcut(KeyCode.C), "Custom keybind used to trigger Deadlock Dash.");
             DashCooldown = config.Bind("Gameplay", "Deadlock Dash Cooldown", 4f, "Base cooldown used by the injected Deadlock Dash skill.");
             DashStocks = config.Bind("Gameplay", "Deadlock Dash Starting Stocks", 2, "Starting and maximum stock count used by the injected Deadlock Dash skill.");
+
+            if (Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions"))
+            {
+                RegisterRiskOfOptions();
+            }
+        }
+
+        private static void RegisterRiskOfOptions()
+        {
+            ModSettingsManager.AddOption(new KeyBindOption(DashKeybind));
         }
 
         public static void ApplyToSkill(SkillDef skillDef)

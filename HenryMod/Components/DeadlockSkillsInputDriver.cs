@@ -77,7 +77,7 @@ namespace DeadlockDash.Components
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.V))
+            if (Modules.Config.GetKeyPressed(Modules.Config.DashKeybind))
             {
                 if (dashSkill.skillDef == null)
                 {
