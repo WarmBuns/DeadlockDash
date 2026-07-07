@@ -16,7 +16,7 @@ namespace DeadlockDash.Modules
         public static void Init()
         {
             ConfigFile config = DeadlockSkillsPlugin.instance.Config;
-            DashKeybind = config.Bind("Keybinds", "Deadlock Dash", new KeyboardShortcut(KeyCode.C), "Custom keybind used to trigger Deadlock Dash.");
+            DashKeybind = config.Bind("Keybinds", "Dash", new KeyboardShortcut(KeyCode.C), "Custom keybind used to trigger Dash.");
             DashCooldown = config.Bind("Gameplay", "Deadlock Dash Cooldown", 4f, "Base cooldown used by the injected Deadlock Dash skill.");
             DashStocks = config.Bind("Gameplay", "Deadlock Dash Starting Stocks", 2, "Starting and maximum stock count used by the injected Deadlock Dash skill.");
 
